@@ -1,4 +1,4 @@
-//import data
+import TodosList from './data/todos';
 
 import {
   // GraphQL types
@@ -8,31 +8,39 @@ import {
   GraphQLList,
   GraphQLObjectType,
   GraphQLEnumType,
+  GraphQLBoolean,
   GraphQLNonNull,
 
-  //create the schema
+  //for create the schema
   GraphQLSchema
 } from 'graphql';
 
+const Todo = new GraphQLObjectType({
+  name: "Todo",
+  description: "Todo list",
+  fields: () => ({
+    _id: {type: new GraphQLNonNull(GraphQLString)},
+    title: {type: new GraphQLNonNull(GraphQLString)},
+    completed: {type: GraphQLBoolean}
+  })
+});
 
+
+// This is the Root Query
 const Query = new GraphQLObjectType({
   name: 'TodoSchema',
-  description: 'Root Schema',
+  description: "Root Schema",
   fields: () => ({
-    hello: {
-      type: GraphQLString,
-      description: 'say hello your name',
-      args: {
-        name: {type: GraphQLString}
-      },
-      resolve: function(root, {name}) {
-        return `hello ${name}` ;
+    todos: {
+      type: new GraphQLList(Todo),
+      resolve: function() {
+        return TodosList;
       }
     }
   })
 });
 
-// The Schema
+// This the Schema
 const Schema = new GraphQLSchema({
   query: Query
 });
